@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Мой зал</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Один столбец под телефон: вкладки внизу (Тренировка, День, Прогресс), карточки упражнений с фото */
+:root{
+  --bg:#EEF0F4; --card:#FFFFFF; --ink:#26213A; --muted:#6E6A80; --line:#D9DBE4;
+  --accent:#E8833A; --accent-soft:#FBE7D7; --ok:#3E8E6B; --ok-soft:#DCEFE5; --bad:#C2453A; --bad-soft:#F7DEDB;
+  --on-accent:#FFFFFF;
+  --display:"Unbounded",system-ui,sans-serif; --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17151F; --card:#221F2D; --ink:#EDEBF5; --muted:#A29EB5; --line:#353147;
+  --accent:#F09A55; --accent-soft:#3A2B22; --ok:#5DB88E; --ok-soft:#1F3329; --bad:#E57368; --bad-soft:#3A2220; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17151F; --card:#221F2D; --ink:#EDEBF5; --muted:#A29EB5; --line:#353147;
+  --accent:#F09A55; --accent-soft:#3A2B22; --ok:#5DB88E; --ok-soft:#1F3329; --bad:#E57368; --bad-soft:#3A2220; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--body);margin:0;padding-inline:16px;padding-block:0 96px}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.banner{margin-top:12px;background:var(--bad-soft);border-radius:10px;padding:8px 12px;font-size:13px}
+header{padding-top:12px}
+.date{color:var(--muted);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+h1{font:700 26px/1.15 var(--display);margin:4px 0 2px;text-wrap:balance}
+.sub{color:var(--muted)}
+.link{background:none;border:0;padding:0;color:var(--accent);font:500 14px var(--body);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.progress{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;background:var(--card);border-radius:14px;padding:10px}
+.day{text-align:center;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px;align-items:center}
+.day b{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;font:600 11px var(--body);border:1.5px solid var(--line)}
+.day.done b{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.day.today b{border-color:var(--accent);border-width:2.5px}
+.part{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:12px;padding-bottom:4px;border-bottom:2px solid var(--ink)}
+.part h2{font:700 18px var(--display);margin:0}
+.part span{color:var(--muted);font-size:13px;white-space:nowrap}
+.partnote{font-size:13px;color:var(--muted)}
+.card{background:var(--card);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.finished{outline:2px solid var(--ok)}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:-4px -4px 0}
+.photos.one{grid-template-columns:1fr}
+.photos figure{margin:0;position:relative}
+.photos img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;background:var(--line)}
+.photos.one img{aspect-ratio:2/1}
+.photos figcaption{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:6px}
+.nophoto{font-size:13px;color:var(--muted);border:1.5px dashed var(--line);border-radius:10px;padding:10px}
+.warn{font-size:13px;background:var(--accent-soft);border-radius:8px;padding:6px 10px}
+.num{font:500 11px var(--display);color:var(--accent);letter-spacing:.06em}
+h3{font:600 17px/1.25 var(--body);margin:2px 0}
+.plan{color:var(--muted);font-size:13px}
+.tips{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+.tips li.hip{color:var(--ink)}
+.tips li.hip::marker{content:"● ";color:var(--accent)}
+.last{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.up{font-size:13px;background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:6px 10px;font-weight:500}
+.sets{display:flex;flex-direction:column;gap:6px}
+.set{display:grid;grid-template-columns:62px minmax(0,1fr) auto minmax(0,1fr) 44px;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.set.round{grid-template-columns:62px minmax(0,1fr) 44px}
+input,textarea{width:100%;min-width:0;padding:8px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px var(--body);font-variant-numeric:tabular-nums}
+/* 16px: иначе Safari на iPhone увеличивает страницу при нажатии на поле */
+.set input{text-align:center}
+input:disabled{opacity:.4}
+.chk{width:44px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:transparent;font-size:18px;cursor:pointer}
+.set.on .chk{background:var(--ok);border-color:var(--ok);color:#fff}
+.set.on input{border-color:var(--ok)}
+.btn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:10px 14px;font:500 15px var(--body);cursor:pointer}
+.card.finished .done{background:var(--ok);border-color:var(--ok);color:#fff}
+.primary{background:var(--accent);color:var(--on-accent);border:0;border-radius:12px;padding:14px;font:600 16px var(--body);cursor:pointer}
+.timerbtn{background:var(--ink);color:var(--card);border:0;border-radius:12px;padding:12px;font:600 15px var(--body);cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.q{font-size:14px;margin:4px 0 2px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:20px;padding:7px 14px;font:500 14px var(--body);cursor:pointer}
+.pill.sel{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.saved{font-size:13px;color:var(--ok);min-height:1em}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1 1 120px}
+.big{font:700 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted);font-size:13px}
+.log{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.log div{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:4px 0}
+.x{background:none;border:0;color:var(--muted);font-size:18px;cursor:pointer;padding:0 6px}
+.toggles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.toggle{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:12px;padding:12px 6px;font:500 14px var(--body);cursor:pointer}
+.toggle.on{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chart svg{width:100%;height:auto;display:block}
+.chart .ax{fill:var(--muted);font:11px var(--body)}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .ln{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}
+.chart .ar{fill:var(--accent-soft);stroke:none}
+.chart .pt{fill:var(--accent)}
+.chart .goal{stroke:var(--ok);stroke-dasharray:4 4;stroke-width:1.5}
+.chart .lbl{fill:var(--ink);font:600 12px var(--body)}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:5px 4px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:500}
+.good{color:var(--ok);font-weight:600}.low{color:var(--bad);font-weight:600}
+.test{display:grid;grid-template-columns:minmax(0,1fr) 64px auto;gap:8px;align-items:center;font-size:14px}
+.test .btn{padding:8px 10px;font-size:14px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav.tabs button{background:none;border:0;padding:12px 4px 14px;font:600 14px var(--body);color:var(--muted);cursor:pointer;border-top:3px solid transparent}
+nav.tabs button.on{color:var(--accent);border-top-color:var(--accent)}
+.overlay{position:fixed;inset:0;background:var(--ink);color:var(--card);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px));text-align:center}
+.overlay .ph{font:600 14px var(--body);letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.overlay .ex{font:700 24px/1.2 var(--display);max-width:22ch;text-wrap:balance}
+.overlay .cnt{font:700 96px/1 var(--display);font-variant-numeric:tabular-nums}
+.overlay .cmd{font:700 44px/1 var(--display);color:var(--accent);min-height:1em}
+.overlay .nx{opacity:.7;font-size:15px}
+.overlay .row{justify-content:center;max-width:360px;width:100%}
+.overlay .btn{color:var(--card);border-color:currentColor}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+<style>.vbtn{border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:10px;padding:10px 14px;font:600 15px var(--body);cursor:pointer}</style>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div id="banner" class="banner" hidden></div>
+  <main id="tab-work"></main>
+  <main id="tab-day" hidden></main>
+  <main id="tab-prog" hidden></main>
+</div>
+<nav class="tabs" aria-label="Разделы">
+  <button type="button" data-tab="work" class="on">Тренировка</button>
+  <button type="button" data-tab="day">День</button>
+  <button type="button" data-tab="prog">Прогресс</button>
+</nav>
+<div id="overlay" class="overlay" hidden></div>
+
+<script>
+/* Программа и личные записи лежат на сайте только зашифрованными (data.enc).
+   Ключ приходит один раз в адресе кнопки бота (?k=...) и хранится в облаке Телеграма. */
+const VER = "1";
+(async () => {
+  const TG = window.Telegram && Telegram.WebApp, CS = TG && TG.initData ? TG.CloudStorage : null;
+  const get = key => new Promise(r => CS ? CS.getItem(key, (e, v) => r(e ? null : v)) : r(localStorage.getItem(key)));
+  const put = (key, v) => CS ? CS.setItem(key, v, () => {}) : localStorage.setItem(key, v);
+  let k = new URLSearchParams(location.search).get("k");
+  if (k) put("zalkey", k); else k = await get("zalkey");
+  const box = document.getElementById("tab-work");
+  if (!k) { box.innerHTML = '<p style="padding:24px 0">Открой приложение кнопкой «Мой зал» в боте @anna_fizruk_bot.</p>'; return; }
+  const raw = Uint8Array.from(atob(k.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
+  const buf = new Uint8Array(await (await fetch("data.enc?v=" + Date.now(), { cache: "no-store" })).arrayBuffer());
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: buf.slice(0, 12) }, key, buf.slice(12));
+  const s = document.createElement("script"); s.textContent = new TextDecoder().decode(plain); document.head.appendChild(s);
+  for (const f of ["app.js", "prog.js"]) await new Promise((ok, no) => { const e = document.createElement("script"); e.src = f + "?v=" + VER; e.onload = ok; e.onerror = no; document.body.appendChild(e); });
+})().catch(e => { document.getElementById("tab-work").innerHTML = '<p style="padding:24px 0">Не открылось: ' + String(e && e.message || e) + '. Закрой и открой ещё раз.</p>'; });
+</script>
+</body>
+</html>

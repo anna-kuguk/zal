@@ -170,13 +170,36 @@ function rows(ex, kind, last) {
   }
   return `<div class="sets">${r}</div>`;
 }
-// Видео тренера: ссылка на полное видео с нужной минуты (?t=секунды). Адрес чата - в зашифрованной части.
+// Видео тренера. Есть ролик (v.clip) - играет прямо в карточке: файл зашифрован тем же ключом, что data.enc.
+// Нет ролика - ссылка на полное видео в Телеграме с нужной минуты. Адрес чата - в зашифрованной части.
 function videoBtn(ex) {
   const v = typeof VIDEO === "object" && VIDEO[ex.id];
-  return v ? `<button class="vbtn" type="button" data-act="video" data-ex="${ex.id}">▶ Видео тренера${v.t ? " с " + Math.floor(v.t / 60) + ":" + pad(v.t % 60) : ""}</button>` : "";
+  if (!v) return "";
+  if (v.clip) return `<div class="vbox" id="vbox_${ex.id}"><button class="vbtn" type="button" data-act="video" data-ex="${ex.id}">▶ Видео тренера</button></div>`;
+  return `<button class="vbtn" type="button" data-act="video" data-ex="${ex.id}">▶ Видео тренера${v.t ? " с " + Math.floor(v.t / 60) + ":" + pad(v.t % 60) : ""}</button>`;
+}
+const clipUrls = {};
+async function playClip(id) {
+  const box = document.getElementById("vbox_" + id);
+  if (!box) return;
+  box.innerHTML = `<div class="vload">Загружаю видео…</div>`;
+  try {
+    if (!clipUrls[id]) {
+      const r = await fetch(VIDEO[id].clip);
+      if (!r.ok) throw new Error("файл не найден (" + r.status + ")");
+      const buf = new Uint8Array(await r.arrayBuffer());
+      const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: buf.slice(0, 12) }, window.ZALK, buf.slice(12));
+      clipUrls[id] = URL.createObjectURL(new Blob([plain], { type: "video/mp4" }));
+    }
+    box.innerHTML = `<video class="clip" src="${clipUrls[id]}" controls playsinline autoplay></video>`;
+  } catch (e) {
+    box.innerHTML = `<div class="vload">Видео не открылось: ${esc(String(e && e.message || e))}</div><button class="vbtn" type="button" data-act="video" data-ex="${id}">▶ Попробовать ещё раз</button>`;
+  }
 }
 function openVideo(id) {
-  const v = VIDEO[id], url = `https://t.me/c/${v.chat || (typeof VIDEO_CHAT === "string" ? VIDEO_CHAT : "")}/${v.msg}${v.t ? "?t=" + v.t : ""}`;
+  const v = VIDEO[id];
+  if (v.clip) return playClip(id);
+  const url = `https://t.me/c/${v.chat || (typeof VIDEO_CHAT === "string" ? VIDEO_CHAT : "")}/${v.msg}${v.t ? "?t=" + v.t : ""}`;
   if (TG && TG.openTelegramLink) TG.openTelegramLink(url); else window.open(url, "_blank");
 }
 function card(ex, kind, k, total) {

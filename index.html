@@ -116,7 +116,7 @@ nav.tabs button.on{color:var(--accent);border-top-color:var(--accent)}
 .overlay .btn{color:var(--card);border-color:currentColor}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
-<style>.vbtn{border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:10px;padding:10px 14px;font:600 15px var(--body);cursor:pointer}</style>
+<style>.clip{display:block;width:100%;max-height:70vh;border-radius:10px;background:#000}.vload{font-size:13px;color:var(--muted);padding:6px 0}.vbtn{border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:10px;padding:10px 14px;font:600 15px var(--body);cursor:pointer}</style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -136,7 +136,7 @@ nav.tabs button.on{color:var(--accent);border-top-color:var(--accent)}
 <script>
 /* Программа и личные записи лежат на сайте только зашифрованными (data.enc).
    Ключ приходит один раз в адресе кнопки бота (?k=...) и хранится в облаке Телеграма. */
-const VER = "2";
+const VER = "3";
 (async () => {
   const TG = window.Telegram && Telegram.WebApp, CS = TG && TG.initData ? TG.CloudStorage : null;
   const get = key => new Promise(r => CS ? CS.getItem(key, (e, v) => r(e ? null : v)) : r(localStorage.getItem(key)));
@@ -147,6 +147,7 @@ const VER = "2";
   if (!k) { box.innerHTML = '<p style="padding:24px 0">Открой приложение кнопкой «Мой зал» в боте @anna_fizruk_bot.</p>'; return; }
   const raw = Uint8Array.from(atob(k.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
   const key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
+  window.ZALK = key; // для роликов упражнений (тоже зашифрованы); ключ не извлекаемый
   const buf = new Uint8Array(await (await fetch("data.enc?v=" + Date.now(), { cache: "no-store" })).arrayBuffer());
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: buf.slice(0, 12) }, key, buf.slice(12));
   const s = document.createElement("script"); s.textContent = new TextDecoder().decode(plain); document.head.appendChild(s);

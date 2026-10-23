@@ -176,7 +176,7 @@ function videoBtn(ex) {
   return v ? `<button class="vbtn" type="button" data-act="video" data-ex="${ex.id}">▶ Видео тренера${v.t ? " с " + Math.floor(v.t / 60) + ":" + pad(v.t % 60) : ""}</button>` : "";
 }
 function openVideo(id) {
-  const v = VIDEO[id], url = `https://t.me/c/${typeof VIDEO_CHAT === "string" ? VIDEO_CHAT : ""}/${v.msg}${v.t ? "?t=" + v.t : ""}`;
+  const v = VIDEO[id], url = `https://t.me/c/${v.chat || (typeof VIDEO_CHAT === "string" ? VIDEO_CHAT : "")}/${v.msg}${v.t ? "?t=" + v.t : ""}`;
   if (TG && TG.openTelegramLink) TG.openTelegramLink(url); else window.open(url, "_blank");
 }
 function card(ex, kind, k, total) {
@@ -216,7 +216,7 @@ function recount() {
 function renderWork() {
   const w = workout(), t = w.type, L = { A: "А", B: "Б", V: "В" };
   const TITLE = { A: "Тренировка А", B: "Тренировка Б", V: "Тренировка В", C: "Кардио и растяжка" };
-  const SUB = { A: "Ягодицы и спина", B: "Бёдра, плечи, равновесие",
+  const SUB = { A: "Всё тело, акцент ягодицы", B: "Бёдра, плечи, равновесие",
     V: "Всё тело, акцент плечи", C: "Эллипс, растяжка, осанка" };
   const others = [...GYM.filter(x => x !== t), "C"].filter(x => x !== t);
   const swaps = "Сегодня другая: " + others.map(x => `<button class="link" type="button" data-act="swap" data-to="${x}">${x === "C" ? "кардио" : L[x]}</button>`).join(" · ");

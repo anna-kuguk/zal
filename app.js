@@ -239,7 +239,7 @@ function recount() {
 function renderWork() {
   const w = workout(), t = w.type, L = { A: "А", B: "Б", V: "В" };
   const TITLE = { A: "Тренировка А", B: "Тренировка Б", V: "Тренировка В", C: "Кардио и растяжка" };
-  const SUB = { A: "Всё тело, акцент ягодицы", B: "Бёдра, плечи, равновесие",
+  const SUB = { A: "Всё тело, акцент ягодицы", B: "Всё тело, акцент спина",
     V: "Всё тело, акцент плечи", C: "Эллипс, растяжка, осанка" };
   const others = [...GYM.filter(x => x !== t), "C"].filter(x => x !== t);
   const swaps = "Сегодня другая: " + others.map(x => `<button class="link" type="button" data-act="swap" data-to="${x}">${x === "C" ? "кардио" : L[x]}</button>`).join(" · ");

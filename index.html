@@ -136,7 +136,7 @@ nav.tabs button.on{color:var(--accent);border-top-color:var(--accent)}
 <script>
 /* Программа и личные записи лежат на сайте только зашифрованными (data.enc).
    Ключ приходит один раз в адресе кнопки бота (?k=...) и хранится в облаке Телеграма. */
-const VER = "3";
+const VER = "4";
 (async () => {
   const TG = window.Telegram && Telegram.WebApp, CS = TG && TG.initData ? TG.CloudStorage : null;
   const get = key => new Promise(r => CS ? CS.getItem(key, (e, v) => r(e ? null : v)) : r(localStorage.getItem(key)));

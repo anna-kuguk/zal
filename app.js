@@ -212,7 +212,7 @@ function card(ex, kind, k, total) {
   const tips = (ex.tips || []).map(t => `<li>${esc(t)}</li>`).join("") + (ex.hip ? `<li class="hip">${esc(ex.hip)}</li>` : "");
   const lt = lastText(ex, last), up = kind === "sets" ? upHint(ex, last) : "";
   return `<section class="card${isDone(ex, kind) ? " finished" : ""}" data-card="${ex.id}" data-kind="${kind}">
-    ${photos(ex)}${ex.warn ? `<div class="warn">${esc(ex.warn)}</div>` : ""}
+    ${photos(ex)}${ex.warn ? `<div class="warn">${esc(ex.warn)}</div>` : ""}${ex.sset ? `<div class="sset">${esc(ex.sset)}</div>` : ""}
     <div><div class="num">${pad(k + 1)} / ${pad(total)}</div><h3>${esc(ex.n)}</h3><div class="plan">${esc(ex.plan)}</div></div>
     <ul class="tips">${tips}</ul>${videoBtn(ex)}${lt ? `<div class="last">${esc(lt)}</div>` : ""}${up ? `<div class="up">↑ ${esc(up)}</div>` : ""}
     ${rows(ex, kind, last)}</section>`;

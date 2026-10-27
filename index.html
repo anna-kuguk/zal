@@ -48,6 +48,10 @@ h1{font:700 26px/1.15 var(--display);margin:4px 0 2px;text-wrap:balance}
 .photos figure{margin:0;position:relative}
 .photos img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;background:var(--line)}
 .photos.one img{aspect-ratio:2/1}
+.photos.tall img{aspect-ratio:2/3;object-fit:contain;background:#111}
+.photos .bad img{outline:3px solid #d33;outline-offset:-3px}
+.photos .bad figcaption{background:#d33}
+.warn.bad{background:#fde4e4;color:#a11;margin-top:6px}
 .photos figcaption{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:6px}
 .nophoto{font-size:13px;color:var(--muted);border:1.5px dashed var(--line);border-radius:10px;padding:10px}
 .warn{font-size:13px;background:var(--accent-soft);border-radius:8px;padding:6px 10px}
@@ -136,7 +140,7 @@ nav.tabs button.on{color:var(--accent);border-top-color:var(--accent)}
 <script>
 /* Программа и личные записи лежат на сайте только зашифрованными (data.enc).
    Ключ приходит один раз в адресе кнопки бота (?k=...) и хранится в облаке Телеграма. */
-const VER = "5";
+const VER = "6";
 (async () => {
   const TG = window.Telegram && Telegram.WebApp, CS = TG && TG.initData ? TG.CloudStorage : null;
   const get = key => new Promise(r => CS ? CS.getItem(key, (e, v) => r(e ? null : v)) : r(localStorage.getItem(key)));

@@ -140,9 +140,14 @@ function isDone(ex, kind) {
 /* ---------- тренировка: отрисовка ---------- */
 function photos(ex) {
   if (!ex.img) return `<div class="nophoto">${esc(ex.nophoto)}</div>`;
-  const [name, idx] = ex.img, cap = idx.length > 1 ? ["начало", "конец"] : [""];
-  return `<div class="photos${idx.length === 1 ? " one" : ""}">` + idx.map((k, j) =>
-    `<figure><img src="${(typeof FP_IMG === "object" && FP_IMG[name + "_" + k]) || `foto/${name}_${k}.jpg`}" alt="${esc(ex.n)}${cap[j] ? ", " + cap[j] : ""}" loading="lazy">${cap[j] ? `<figcaption>${cap[j]}</figcaption>` : ""}</figure>`).join("") + `</div>`;
+  const [name, idx] = ex.img, cap = idx.length > 1 ? ["начало", "конец"] : [ex.bad ? "так" : ""];
+  const src = f => (typeof FP_IMG === "object" && FP_IMG[f]) || `foto/${f}.jpg`;
+  const one = idx.length === 1 && !ex.bad;
+  // кадр «как не надо» - рядом с правильным, с красной подписью
+  const bad = ex.bad ? `<figure class="bad"><img src="${src(ex.bad[0])}" alt="${esc(ex.n)}, так не надо" loading="lazy"><figcaption>так не надо</figcaption></figure>` : "";
+  return `<div class="photos${one ? " one" : ""}${ex.tall ? " tall" : ""}">` + idx.map((k, j) =>
+    `<figure><img src="${src(name + "_" + k)}" alt="${esc(ex.n)}${cap[j] ? ", " + cap[j] : ""}" loading="lazy">${cap[j] ? `<figcaption>${cap[j]}</figcaption>` : ""}</figure>`).join("") + bad + `</div>` +
+    (ex.bad ? `<div class="warn bad">${esc(ex.bad[1])}</div>` : "");
 }
 function rows(ex, kind, last) {
   const it = workout().items[ex.id] || {};
